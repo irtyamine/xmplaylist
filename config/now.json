@@ -1,0 +1,20 @@
+{
+  "builds": [
+    {
+      "src": "frontend/next.config.js",
+      "use": "@now/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "path/to/next-app/$1",
+      "continue": true
+    }
+  ],
+  "build": {
+    "env": {
+      "DISABLE_CONFIG_IMPORT": "true"
+    }
+  }
+}

@@ -6,5 +6,6 @@ module.exports = withSass(
   withPurgeCss({
     compress: false,
     purgeCssEnabled: ({ dev, isServer }) => (!dev && !isServer),
+    target: 'serverless',
   }),
 );
