@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { formatDistanceStrict } from 'date-fns';
 import fetch from 'isomorphic-unfetch';
 import _ from 'lodash';
@@ -28,19 +29,6 @@ function getLastStartTime(recent: StationRecent[]): number {
 }
 
 const StationPage: NextComponentType<any, any, StationProps> = props => {
-  const { data, error } = useSWR(`${url}/api/station/${props.channelId}`, {
-    refreshInterval: 0,
-    initialData: props.recent,
-    fetcher: async (url, options) => fetch(url, options).then(async r => r.json()),
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [recent, setRecent] = useState<StationRecent[][]>(data as StationRecent[][]);
-
-  if (error) {
-    return <Error statusCode={500} />;
-  }
-
   const { channelId } = props;
   const lowercaseId = channelId.toLowerCase();
   const channel = channels.find(
@@ -50,14 +38,71 @@ const StationPage: NextComponentType<any, any, StationProps> = props => {
     return <Error statusCode={404} />;
   }
 
-  async function fetchMore(): Promise<void> {
-    setLoading(true);
-    const lastDateTime = getLastStartTime(recent[recent.length - 1]);
-    const res = await fetch(`${url}/api/station/${channelId}?last=${lastDateTime}`);
-    const json = await res.json();
-    setLoading(false);
-    setRecent([...recent, ..._.chunk<any>(json, 12)]);
-  }
+  const { pages, isLoadingMore, isReachingEnd, loadMore } = useSWRPages(
+    // page key
+    channel.deeplink,
+
+    // page component
+    ({ offset, withSWR }) => {
+      console.log({ offset });
+      const { data } = withSWR(
+        useSWR(
+          offset ?
+            `${url}/api/station/${props.channelId}?last=${offset}` :
+            `${url}/api/station/${props.channelId}`,
+          {
+            refreshInterval: 0,
+            initialData: props.recent,
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            fetcher: async (url, options) => {
+              console.log('hello');
+              return fetch(url, options).then(async r => _.chunk(await r.json(), 12));
+            },
+          },
+        ),
+      );
+      // you can still use other SWRs outside
+
+      // if (!projects) {
+      //   return <p>loading</p>;
+      // }
+
+      return <StreamCardsLayout tracks={data} channel={channel} secondaryText={secondaryText} />;
+    },
+
+    // get next page's offset from the index of current page
+    SWR => {
+      const data = SWR.data ? SWR.data : props.recent;
+      if (data && data.length === 0) {
+        return null;
+      }
+
+      // offset = pageCount × pageSize
+      const recent = data[data.length - 1];
+      const last = recent[recent.length - 1].start_time;
+      return new Date(last).getTime();
+    },
+
+    // deps of the page component
+    [],
+  );
+
+  const [loading, setLoading] = useState(false);
+  // const [recent, setRecent] = useState<StationRecent[][]>(swr.data as StationRecent[][]);
+
+  // if (swr.error) {
+  //   return <Error statusCode={500} />;
+  // }
+
+  // async function fetchMore(): Promise<void> {
+  //   setLoading(true);
+  //   const lastDateTime = getLastStartTime(recent[recent.length - 1]);
+  //   const res = await fetch(`${url}/api/station/${channelId}?last=${lastDateTime}`);
+  //   const json = await res.json();
+  //   setLoading(false);
+  //   setRecent([...recent, ..._.chunk<any>(json, 12)]);
+  // }
 
   function secondaryText(track: TrackResponse): string {
     const timeAgo = formatDistanceStrict(
@@ -114,14 +159,12 @@ const StationPage: NextComponentType<any, any, StationProps> = props => {
       </div>
       {/* Main body */}
       <div className="container">
-        <div className="row">
-          <StreamCardsLayout tracks={recent} channel={channel} secondaryText={secondaryText} />
-        </div>
+        <div className="row">{pages}</div>
         {/* Load More */}
         <div className="row mb-4 text-center">
           <div className="col-12">
-            <button type="button" className="btn btn-primary" onClick={async () => fetchMore()}>
-              {loading ? 'Loading..' : 'Load More'}
+            <button type="button" className="btn btn-primary" onClick={() => loadMore()}>
+              {isLoadingMore ? 'Loading..' : 'Load More'}
             </button>
           </div>
         </div>
