@@ -109,7 +109,7 @@ export default class TrackPage extends React.Component<StationProps> {
         </div>
         <div className="container my-3">
           <div className="row">
-            <div className="col-12 col-md-6 offset-md-3 mb-2">
+            <div className="col-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2 mb-2">
               <Link href="/station/[id]" as={`/station/${channel.deeplink.toLowerCase()}`}>
                 <a className="btn btn-light rounded-pill">
                   <FontAwesomeIcon icon="arrow-left" /> Back to {channel.name}
@@ -118,7 +118,7 @@ export default class TrackPage extends React.Component<StationProps> {
             </div>
           </div>
           <div className="row">
-            <div className="col-12 col-md-6 offset-md-3 mb-3">
+            <div className="col-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2 mb-3">
               <div className="row bg-light shadow-light radius-media-left radius-media-right ml-0 mr-0">
                 <div className="col-5 p-0">
                   <img src={albumCover} className="img-fluid radius-media-left" alt="..." />
@@ -145,7 +145,7 @@ export default class TrackPage extends React.Component<StationProps> {
             </div>
           </div>
           <div className="row">
-            <div className="col-12 col-md-6 offset-md-3 mb-3">
+            <div className="col-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2 mb-3">
               <div className="rounded bg-light shadow-light pt-3 overflow-hidden">
                 <h4 className="text-center">Times Played Per Day</h4>
                 <SizeMe>
@@ -209,7 +209,7 @@ export default class TrackPage extends React.Component<StationProps> {
           </div>
           {trackData.spotify.spotify_id && (
             <div className="row">
-              <div className="col-12 col-md-6 offset-md-3 mb-3">
+              <div className="col-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2 mb-3">
                 <div className="rounded bg-light shadow-light p-2" style={{ lineHeight: 0 }}>
                   <SpotifyIframe track={trackData} />
                 </div>
@@ -217,7 +217,7 @@ export default class TrackPage extends React.Component<StationProps> {
             </div>
           )}
           <div className="row">
-            <div className="col-12 col-md-6 offset-md-3 mb-3">
+            <div className="col-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2 mb-3">
               <div className="rounded bg-light shadow-light p-3">
                 <h4 className="text-center">Links</h4>
                 <TrackLinksButtons links={trackData.links} id={trackData.track.id} />

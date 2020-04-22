@@ -40,10 +40,10 @@
     "laabr": "6.1.0",
     "lodash": "4.17.15",
     "next": "9.3.5",
+    "next-purgecss": "4.0.0",
+    "node-sass": "4.13.1",
     "p-forever": "2.1.0",
     "pg": "8.0.2",
-    "node-sass": "4.13.1",
-    "next-purgecss": "4.0.0",
     "react": "16.13.1",
     "react-adsense": "0.1.0",
     "react-bootstrap": "1.0.0",
@@ -52,7 +52,8 @@
     "react-lazy-load-image-component": "1.4.3",
     "react-lazyload": "2.6.7",
     "react-sizeme": "2.6.12",
-    "redis": "3.0.2"
+    "redis": "3.0.2",
+    "swr": "^0.2.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "7.9.0",
